@@ -1,7 +1,12 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'Splash_Screen.dart';
 import 'MiddleSplash.dart';
 import 'Navphotopage1.dart';
+import 'ViewCategoriesPage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 void main() => runApp(MaterialApp(
@@ -11,6 +16,7 @@ void main() => runApp(MaterialApp(
         '/MiddleSplash': (context) => MiddleSplash(),
         '/home': (context) => Home(),
         '/Navphotopage1': (context) => Navphotopage1(),
+        '/ViewCategoriesPage': (context) => ViewCategoriesPage(),
       },
     ));
 
@@ -23,199 +29,140 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final PageController _pageController = PageController();
+  final List<Map<String, String>> pages = [
+    {'image': 'assets/first.jpg', 'route': '/Navphotopage1'},
+    {'image': 'assets/second.jpg', 'route': '/Navphotopage2'},
+    {'image': 'assets/ Third.jpg', 'route': '/Navphotopage3'},
+    {'image': 'assets/fourth.png', 'route': '/Navphotopage4'},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-
-    return SafeArea(
+    //getting size of the screen or dimension
+    final size = MediaQuery.of(context).size;
+//get the screen orientation,portrait or landscape
+    final isPortrait = size.height > size.width;
+//calculate dynamic sizes
+    final double appbarHeight =
+        isPortrait ? size.height * 0.075 : size.height * 0.13;
+    final double textSize =
+        isPortrait ? size.height * 0.03 : size.height * 0.06;
+    final double iconSize =
+        isPortrait ? size.height * 0.07 : size.height * 0.15;
+    final double imageSize =
+        isPortrait ? size.height * 0.033 : size.height * 0.07;
+    final double pageHeight = isPortrait ? size.height / 5 : size.height / 2;
+    final double dotSize =
+        isPortrait ? size.height * 0.01 : size.height * 0.022;
+    final double actdotSize =
+        isPortrait ? size.width * 0.05 : size.width * 0.05;
+    return Padding(
+      padding: EdgeInsets.only(top: 12),
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          titleSpacing: isPortrait ? 10 : 5,
           backgroundColor: Colors.black,
           foregroundColor: Colors.black,
-          automaticallyImplyLeading: false,
           title: Row(
             children: [
-              Icon(
-                Icons.school_sharp,
-                size: screenHeight / 17,
-                color: Color.fromARGB(255, 229, 226, 226),
+              Image.asset(
+                'assets/education.png',
+                color: Colors.white,
+                height: iconSize,
               ),
               SizedBox(
-                width: screenWidth * 0.02,
+                width: 10,
               ),
               Text(
                 'FACULTY',
                 style: TextStyle(
-                  fontSize: screenHeight * 0.029,
-                  letterSpacing: 3.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 229, 226, 226),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  fontSize: textSize,
                 ),
               ),
               Spacer(),
-              IconButton(
-                icon: Icon(
-                  Icons.notifications_none_outlined,
-                  size: screenHeight * 0.04,
-                  color: Color.fromARGB(255, 229, 226, 226),
+              GestureDetector(
+                onTap: () {},
+                child: Image.asset(
+                  'assets/bell.png',
+                  height: imageSize,
+                  color: Colors.white,
                 ),
-                onPressed: () {
-                  print('You have Clicked The Button');
-                },
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.search,
-                  size: screenHeight * 0.04,
-                  color: Color.fromARGB(255, 229, 226, 226),
+              SizedBox(width: 11),
+              GestureDetector(
+                onTap: () {},
+                child: Image.asset(
+                  'assets/search.png',
+                  height: imageSize,
+                  color: Colors.white,
                 ),
-                onPressed: () {},
-              )
+              ),
             ],
           ),
+          toolbarHeight: appbarHeight,
         ),
         body: Padding(
-          padding: EdgeInsets.fromLTRB(
-              screenWidth * 0.01, screenHeight * 0.01, 0, 0),
+          padding: EdgeInsets.only(top: 20),
           child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: screenHeight * 0.03,
-              ),
-              SizedBox(
-                height: isLandscape
-                    ? screenHeight / 2
-                    : screenHeight /
-                        5, // PageView takes one-fourth of the screen height
-                child: PageView(
+            children: [
+              Container(
+                  height: pageHeight,
+                  child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: pages.length,
+                      itemBuilder: (context, index) {
+                        final page = pages[index];
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, page['route']!);
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(7),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(page['image']!),
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        );
+                      })),
+              Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: SmoothPageIndicator(
                   controller: _pageController,
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Navphotopage1');
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            14.0), // Change the border radius here
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Container(
-                              margin:
-                                  EdgeInsets.only(right: screenWidth * 0.03),
-                              child: Image.asset(
-                                'assets/first.jpg',
-                                fit: BoxFit.fill,
-                                height: constraints.maxHeight,
-                                width: constraints.maxWidth,
-                              ),
-                            );
-                          },
-                        ),
+                  count: pages.length,
+                  effect: CustomizableEffect(
+                      activeDotDecoration: DotDecoration(
+                        width: actdotSize,
+                        height: dotSize,
+                        color: Color.fromARGB(255, 46, 146, 101),
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Navphotopage2');
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            14.0), // Change the border radius here
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Container(
-                              margin:
-                                  EdgeInsets.only(right: screenWidth * 0.03),
-                              color: Colors.blue,
-                              child: Image.asset(
-                                'assets/second.jpg',
-                                fit: BoxFit.fill,
-                                height: constraints.maxHeight,
-                                width: constraints.maxWidth,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Navphotopage3');
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            14.0), // Change the border radius here
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Container(
-                              margin:
-                                  EdgeInsets.only(right: screenWidth * 0.03),
-                              color: Colors.pink,
-                              child: Image.asset(
-                                'assets/Third.jpg',
-                                fit: BoxFit.fill,
-                                height: constraints.maxHeight,
-                                width: constraints.maxWidth,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/Navphotopage4');
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            14.0), // Change the border radius here
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Container(
-                              margin:
-                                  EdgeInsets.only(right: screenWidth * 0.03),
-                              color: Colors.green,
-                              child: Image.asset(
-                                'assets/fourth.png',
-                                fit: BoxFit.fill,
-                                height: constraints.maxHeight,
-                                width: constraints.maxWidth,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                  onPageChanged: (index) {
-                    // You can handle page change here if needed
-                  },
+                      dotDecoration: DotDecoration(
+                        width: dotSize,
+                        height: dotSize,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      )),
                 ),
               ),
-              SizedBox(
-                  height: screenHeight *
-                      0.025), // Space between PageView and indicator
-              SmoothPageIndicator(
-                controller: _pageController,
-                count: 4, // Number of pages
-                effect: CustomizableEffect(
-                    activeDotDecoration: DotDecoration(
-                      width: screenWidth * 0.05,
-                      height: screenHeight * 0.01,
-                      color: Color.fromARGB(255, 46, 146, 101),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    dotDecoration: DotDecoration(
-                      width: screenWidth * 0.02,
-                      height: screenHeight * 0.01,
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4),
-                    )),
+              Row(
+                children: [
+                  Text(
+                    'Categories',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
             ],
           ),

@@ -19,16 +19,20 @@ class _MiddleSplashState extends State<MiddleSplash> {
   }
 
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isPortrait = size.height > size.width;
+    final textSize = isPortrait ? size.height * 0.04 : size.height * 0.1;
+    final imageSize = isPortrait ? size.height * 0.09 : size.height * 0.2;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 46, 146, 101),
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.school,
+            Image.asset(
+              'assets/education.png',
+              height: imageSize,
               color: Colors.white,
-              size: 50.0,
             ),
             SizedBox(
               width: 10.0,
@@ -36,8 +40,8 @@ class _MiddleSplashState extends State<MiddleSplash> {
             Text(
               'FACULTY',
               style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.w900,
+                  fontSize: textSize,
+                  fontWeight: FontWeight.w700,
                   color: const Color.fromARGB(255, 255, 255, 255),
                   letterSpacing: 3.0),
             )
